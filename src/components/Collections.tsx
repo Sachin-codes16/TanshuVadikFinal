@@ -46,6 +46,7 @@ const HOME_DECOR_ORDER = [
   'carpets',
   'bath mat',
   'cushion',
+  'cusion',
   'throw',
   'basket',
   'planter',
