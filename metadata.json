@@ -1,0 +1,6 @@
+{
+  "name": "Tanshu Vaidik Heritage",
+  "description": "Ethical Artistry in Textiles - Premium handmade home décor & pet lifestyle manufacturing",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
