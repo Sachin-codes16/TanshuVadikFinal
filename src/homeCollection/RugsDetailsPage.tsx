@@ -40,6 +40,7 @@ export const RugsDetailsPage: React.FC<RugsDetailsPageProps> = ({
   onBack,
 }) => {
   const [rugsProducts, setRugsProducts] = useState<Product[]>([]);
+  const [bannerImage, setBannerImage] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
@@ -54,10 +55,11 @@ export const RugsDetailsPage: React.FC<RugsDetailsPageProps> = ({
 // rugsdetals page ki hai ye api 
 
     getProductList(categorySlug, subCategorySlug)
-      .then((res: { data?: { data?: ApiProduct[] } }) => {
+      .then((res: { data?: { data?: ApiProduct[]; bannerImage?: string } }) => {
         if (cancelled) return;
         const list = res?.data?.data ?? [];
         setRugsProducts(list.map(mapApiProduct));
+        setBannerImage(res?.data?.bannerImage || null);
       })
       .catch((err) => {
         if (cancelled) return;
@@ -160,7 +162,7 @@ export const RugsDetailsPage: React.FC<RugsDetailsPageProps> = ({
       {/* Hero */}
       <section className="relative min-h-[280px] sm:min-h-[320px] flex items-end overflow-hidden bg-[#2C2623]">
         <img
-          src={subCategoryImage || rugsHeroImage}
+          src={bannerImage || subCategoryImage || rugsHeroImage}
           alt={subCategoryName}
           className="absolute inset-0 w-full h-full object-cover"
         />

@@ -107,6 +107,8 @@ export const getColorList = () => apiGet('/api/color-list');
 
 export const getCollectionFilterList = () => apiGet('/api/collection-list');
 
+export const getCollectionBanner = () => apiGet('/api/collection/banner');
+
 export const getShapeList = () => apiGet('/api/shape-list');
 
 export const getWeaveList = () => apiGet('/api/weave-list');

@@ -11,6 +11,10 @@
     {
       "source": "/media-proxy/api/:path*",
       "destination": "http://api.tanshuvaidik.com/:path*"
+    },
+    {
+      "source": "/((?!api/|media-proxy/|assets/|.*\\.[a-zA-Z0-9]+$).*)",
+      "destination": "/index.html"
     }
   ]
 }

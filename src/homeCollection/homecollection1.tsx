@@ -19,6 +19,7 @@ interface ApiSubCategory {
   subCategoryName: string;
   subCatImg: string;
   subCatIcon: string;
+  hoverImage: string | null;
   shortDescription: string;
   subCategorySlug: string;
 }
@@ -27,6 +28,7 @@ interface SubCategoryCard {
   slug: string;
   name: string;
   image: string;
+  hoverImage: string | null;
   icon: string;
   description: string;
 }
@@ -57,6 +59,7 @@ export const HomeCollectionDetailPage: React.FC<HomeCollectionDetailPageProps> =
             slug: item.subCategorySlug,
             name: item.subCategoryName,
             image: item.subCatImg,
+            hoverImage: item.hoverImage,
             icon: item.subCatIcon,
             description: item.shortDescription,
           }))
@@ -185,9 +188,21 @@ export const HomeCollectionDetailPage: React.FC<HomeCollectionDetailPageProps> =
                     <img
                       src={category.image}
                       alt={category.name}
-                      className="w-full h-full object-cover transition-transform duration-700 ease-out group-hover:scale-105"
+                      className={
+                        category.hoverImage
+                          ? 'w-full h-full object-cover transition-opacity duration-500 ease-out group-hover:opacity-0'
+                          : 'w-full h-full object-cover transition-transform duration-700 ease-out group-hover:scale-105'
+                      }
                       loading="lazy"
                     />
+                    {category.hoverImage && (
+                      <img
+                        src={category.hoverImage}
+                        alt={category.name}
+                        className="absolute inset-0 w-full h-full object-cover opacity-0 transition-opacity duration-500 ease-out group-hover:opacity-100"
+                        loading="lazy"
+                      />
+                    )}
                   </div>
 
                   {/* Icon badge straddling the image / body seam */}

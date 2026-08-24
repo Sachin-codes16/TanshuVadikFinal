@@ -1,16 +1,47 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { Play, ChevronLeft, ChevronRight } from 'lucide-react';
+import { getCollectionBanner } from '../api';
 import heroImage from '../assets/collection/homedog.jpg';
 import heroImage2 from '../assets/collection/ClickCollection2.jpg';
 import heroImage3 from '../assets/collection/Clickcollection3.jpg';
 
-const SLIDES = [heroImage, heroImage2, heroImage3];
-const SLIDE_COUNT = SLIDES.length;
+const FALLBACK_SLIDES = [heroImage, heroImage2, heroImage3];
 const AUTO_SLIDE_INTERVAL = 4000;
 
+// The banner API's response field name isn't confirmed yet (it currently
+// returns an empty list), so accept whichever of these common keys shows up.
+const extractBannerImage = (item: Record<string, unknown>): string | undefined => {
+  const candidate = item.bannerImage ?? item.image ?? item.img ?? item.bannerImg;
+  return typeof candidate === 'string' && candidate.length > 0 ? candidate : undefined;
+};
+
 export const HeroBanner: React.FC<{ onExploreCollections: () => void }> = ({ onExploreCollections }) => {
+  const [slides, setSlides] = useState<string[]>(FALLBACK_SLIDES);
   const [activeSlide, setActiveSlide] = useState(0);
   const previousSlideRef = useRef(0);
+  const slideCount = slides.length;
+
+  useEffect(() => {
+    let cancelled = false;
+
+    getCollectionBanner()
+      .then((res: { data?: { data?: Record<string, unknown>[] } }) => {
+        if (cancelled) return;
+        const images = (res?.data?.data ?? []).map(extractBannerImage).filter((url): url is string => !!url);
+        if (images.length > 0) {
+          setSlides(images);
+          setActiveSlide(0);
+          previousSlideRef.current = 0;
+        }
+      })
+      .catch((err) => {
+        console.error('Failed to load collection banner images.', err);
+      });
+
+    return () => {
+      cancelled = true;
+    };
+  }, []);
 
   const changeSlide = (updater: (prev: number) => number) => {
     setActiveSlide((prev) => {
@@ -21,19 +52,19 @@ export const HeroBanner: React.FC<{ onExploreCollections: () => void }> = ({ onE
 
   useEffect(() => {
     const timer = setInterval(() => {
-      changeSlide((prev) => (prev + 1) % SLIDE_COUNT);
+      changeSlide((prev) => (prev + 1) % slideCount);
     }, AUTO_SLIDE_INTERVAL);
     return () => clearInterval(timer);
-  }, []);
+  }, [slideCount]);
 
-  const goToPrevSlide = () => changeSlide((prev) => (prev - 1 + SLIDE_COUNT) % SLIDE_COUNT);
-  const goToNextSlide = () => changeSlide((prev) => (prev + 1) % SLIDE_COUNT);
+  const goToPrevSlide = () => changeSlide((prev) => (prev - 1 + slideCount) % slideCount);
+  const goToNextSlide = () => changeSlide((prev) => (prev + 1) % slideCount);
 
   return (
     <section className="relative min-h-[520px] sm:min-h-[600px] flex items-center overflow-hidden bg-[#FAF8F5]">
       {/* A gentle left-side tint keeps the text readable without creating a card. */}
       <div className="absolute inset-0 z-0">
-        {SLIDES.map((slide, index) => {
+        {slides.map((slide, index) => {
           const isActive = index === activeSlide;
           const isPrevious = !isActive && index === previousSlideRef.current;
           const positionClass = isActive
@@ -86,7 +117,7 @@ export const HeroBanner: React.FC<{ onExploreCollections: () => void }> = ({ onE
 
           {/* Slide indicator */}
           <div className="flex items-center gap-2 mt-6">
-            {SLIDES.map((_, index) => (
+            {slides.map((_, index) => (
               <button
                 key={index}
                 aria-label={`Go to slide ${index + 1}`}
