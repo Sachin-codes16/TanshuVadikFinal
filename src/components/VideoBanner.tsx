@@ -2,7 +2,11 @@ import React, { useState } from 'react';
 import { Play, X, Heart, Award, Sparkles } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
 
-export const VideoBanner: React.FC = () => {
+interface VideoBannerProps {
+  youtubeId?: string;
+}
+
+export const VideoBanner: React.FC<VideoBannerProps> = ({ youtubeId }) => {
   const [isOpen, setIsOpen] = useState(false);
 
   return (
@@ -83,22 +87,34 @@ export const VideoBanner: React.FC = () => {
                 </h4>
                 <div className="h-[1px] bg-[#8F533C]/20 w-16" />
                 
-                {/* Embedded atmospheric Loom image/video simulator */}
-                <div className="relative aspect-video w-full bg-[#2C2623] border border-[#EBE4DC] overflow-hidden group">
-                  <img
-                    src="https://lh3.googleusercontent.com/aida-public/AB6AXuDAgdEoJ388LYmLORQcLJNBrO3JtaR3-S-DyJB-hesRiPrvyrIBm3_Cqb38k7mKj2EL0pYUdsloUVvN4WdPpZWo9GZVnRHlX51HXdVSY-ydP7t7UClRXp7DjFvdEPaCWp_CGrPBwJ3xqhwzOkTDpMhJ_LAuHEHZ3-GHXbegT5K1Huu4T_Usb0AHedf-Jhy7xjAIyVHmGlCuWr4IJeOtxKvCjTjIB67dRkDAa-f1T9inhnqi6avKF6UvjAEBV5zzqkY7LLLmgv3-KVQ"
-                    alt="Loom shuttle simulation"
-                    className="w-full h-full object-cover opacity-60"
-                  />
-                  <div className="absolute inset-0 flex flex-col items-center justify-center text-white bg-black/20 p-6 text-center">
-                    <span className="font-serif text-lg italic text-[#FAF8F5] mb-2">
-                      "Every thread is a conversation between weaver and loom."
-                    </span>
-                    <span className="text-[10px] tracking-widest font-mono text-white/70 uppercase">
-                      Panipat Heritage Looms, Haryana
-                    </span>
+                {/* Embedded video */}
+                {youtubeId ? (
+                  <div className="relative aspect-video w-full bg-[#2C2623] border border-[#EBE4DC] overflow-hidden">
+                    <iframe
+                      className="w-full h-full"
+                      src={`https://www.youtube.com/embed/${youtubeId}?autoplay=1`}
+                      title="Tanshu Vaidik Craftsmanship"
+                      allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                      allowFullScreen
+                    />
                   </div>
-                </div>
+                ) : (
+                  <div className="relative aspect-video w-full bg-[#2C2623] border border-[#EBE4DC] overflow-hidden group">
+                    <img
+                      src="https://lh3.googleusercontent.com/aida-public/AB6AXuDAgdEoJ388LYmLORQcLJNBrO3JtaR3-S-DyJB-hesRiPrvyrIBm3_Cqb38k7mKj2EL0pYUdsloUVvN4WdPpZWo9GZVnRHlX51HXdVSY-ydP7t7UClRXp7DjFvdEPaCWp_CGrPBwJ3xqhwzOkTDpMhJ_LAuHEHZ3-GHXbegT5K1Huu4T_Usb0AHedf-Jhy7xjAIyVHmGlCuWr4IJeOtxKvCjTjIB67dRkDAa-f1T9inhnqi6avKF6UvjAEBV5zzqkY7LLLmgv3-KVQ"
+                      alt="Loom shuttle simulation"
+                      className="w-full h-full object-cover opacity-60"
+                    />
+                    <div className="absolute inset-0 flex flex-col items-center justify-center text-white bg-black/20 p-6 text-center">
+                      <span className="font-serif text-lg italic text-[#FAF8F5] mb-2">
+                        "Every thread is a conversation between weaver and loom."
+                      </span>
+                      <span className="text-[10px] tracking-widest font-mono text-white/70 uppercase">
+                        Panipat Heritage Looms, Haryana
+                      </span>
+                    </div>
+                  </div>
+                )}
 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-4">
                   <div className="flex flex-col gap-2">

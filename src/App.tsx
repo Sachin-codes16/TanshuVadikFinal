@@ -16,6 +16,7 @@ import { BlogsPage } from './blogs/BlogsPage';
 import { CapabilitiesPage } from './capabilities/CapabilitiesPage';
 import { ContactPage } from './contact/ContactPage';
 import { SustainabilityPage } from './sustainability/SustainabilityPage';
+import { pushCollectionPath } from './homeCollection/collectionRouting';
 
 type PageKey = 'home' | 'about' | 'collections' | 'blogs' | 'capabilities' | 'sustainability' | 'contact';
 
@@ -77,6 +78,14 @@ export default function App() {
   const handleNavigateContact = () => navigate('contact');
   const handleBackToHome = () => navigate('home');
 
+  // Home page's "OUR COLLECTIONS" grid opens the same deep-linked collection
+  // detail URL that clicking a sub-category inside /collections itself uses,
+  // instead of the old showcase modal.
+  const handleOpenCollectionSubCategory = (categorySlug: string, subCategorySlug: string) => {
+    setPage('collections');
+    pushCollectionPath([categorySlug, subCategorySlug]);
+  };
+
   const handleNavigateCertifications = () => {
     if (page === 'home') {
       document.getElementById('certifications')?.scrollIntoView({ behavior: 'smooth' });
@@ -127,7 +136,7 @@ export default function App() {
               <WhyChooseUs />
 
               {/* Interactive Catalog and Bespoke Thread Visualizer */}
-              <Collections />
+              <Collections onOpenSubCategory={handleOpenCollectionSubCategory} />
 
               {/* High Fidelity Video / Story Banner */}
               <VideoBanner />

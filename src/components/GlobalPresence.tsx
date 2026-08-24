@@ -1,5 +1,5 @@
 import React from 'react';
-import worldMapImage from '../assets/About/mapimage.jpg';
+import worldMapImage from '../assets/finalimages1/map.jpg';
 
 export const GlobalPresence: React.FC = () => {
   return (

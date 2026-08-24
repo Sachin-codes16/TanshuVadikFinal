@@ -42,6 +42,11 @@ interface ApiTeamMember {
   photo?: string;
   image?: string;
   thumbnail?: string;
+  icon?: string;
+  socialIcon?: string;
+  linkedin?: string;
+  linkedinUrl?: string;
+  socialLink?: string;
 }
 
 interface TeamMember {
@@ -49,6 +54,8 @@ interface TeamMember {
   role: string;
   photo?: string;
   initials: string;
+  icon?: string;
+  link?: string;
 }
 
 const toInitials = (name: string) =>
@@ -159,6 +166,8 @@ export const AboutTeam: React.FC = () => {
               role: item.role ?? item.designation ?? item.position ?? '',
               photo: item.photo ?? item.image ?? item.thumbnail,
               initials: toInitials(item.name ?? ''),
+              icon: item.icon ?? item.socialIcon,
+              link: item.linkedin ?? item.linkedinUrl ?? item.socialLink,
             }))
           );
         }
@@ -284,6 +293,20 @@ export const AboutTeam: React.FC = () => {
                   {m.name}
                 </h3>
                 <span className="font-sans text-xs text-[#615751]">{m.role}</span>
+                {(m.icon || m.link) && (
+                  <a
+                    href={m.link || undefined}
+                    target={m.link ? '_blank' : undefined}
+                    rel={m.link ? 'noopener noreferrer' : undefined}
+                    className="mt-1 w-7 h-7 rounded bg-[#2C2623] hover:bg-[#8F533C] text-white flex items-center justify-center transition-colors overflow-hidden"
+                  >
+                    {m.icon ? (
+                      <img src={m.icon} alt="" className="w-3.5 h-3.5 object-contain" />
+                    ) : (
+                      <Linkedin size={13} />
+                    )}
+                  </a>
+                )}
               </div>
             </div>
           ))}

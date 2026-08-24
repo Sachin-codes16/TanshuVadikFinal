@@ -1,6 +1,6 @@
 import React from 'react';
 import { Layers, Users, ClipboardList, Globe } from 'lucide-react';
-import worldMapImage from '../assets/About/mapimage2.jpg';
+import worldMapImage from '../assets/finalimages1/bussnessMap.jpg';
 
 const stats = [
   { icon: <Layers size={26} className="text-[#8F533C]" strokeWidth={1.5} />, value: '20+', label: 'Product Categories' },
@@ -31,7 +31,7 @@ export const AboutStats: React.FC = () => {
 
         {/* Global markets map */}
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 items-start">
-          <div className="lg:col-span-7 relative w-full aspect-[1536/1024] select-none overflow-hidden bg-[#F9F5F1]">
+          <div className="lg:col-span-7 relative w-full -mt-4 sm:-mt-6 aspect-[1536/1024] select-none overflow-hidden bg-[#F9F5F1]">
             <img
               src={worldMapImage}
               alt="Tanshu Vaidik global markets map"

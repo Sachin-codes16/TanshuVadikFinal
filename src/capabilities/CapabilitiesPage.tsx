@@ -14,7 +14,7 @@ export const CapabilitiesPage: React.FC = () => {
       <CapabilitiesProcess />
       <CapabilitiesProductStory />
       <CapabilitiesInfrastructure />
-      <VideoBanner />
+      <VideoBanner youtubeId="N8M9PQCyIRs" />
       <CapabilitiesWomen />
       <CapabilitiesGroup />
     </div>

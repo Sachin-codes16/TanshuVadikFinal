@@ -39,23 +39,46 @@ interface ApiHomeCategory {
   subCategories: ApiHomeSubCategory[];
 }
 
-// API-driven category order sometimes puts Bath Mats out of sequence; pin it
-// right after Carpets to match the intended layout.
-const reorderBathMats = (categories: ApiHomeCategory[]): ApiHomeCategory[] =>
+// API-driven category order doesn't match the intended layout, so pin the
+// Home Décor sub-categories to this exact sequence (mirrors homeDecorCategories below).
+const HOME_DECOR_ORDER = [
+  'rugs',
+  'carpets',
+  'bath mat',
+  'cushion',
+  'throw',
+  'basket',
+  'planter',
+  'table linen',
+  'kitchen linen',
+  'tote bag',
+  'wall décor',
+  'wall decor',
+  'home accessories',
+];
+
+const reorderHomeDecor = (categories: ApiHomeCategory[]): ApiHomeCategory[] =>
   categories.map((category) => {
-    const subs = [...category.subCategories];
-    const bathMatIndex = subs.findIndex((s) => s.subCategoryName.toLowerCase().includes('bath mat'));
-    const carpetIndex = subs.findIndex((s) => s.subCategoryName.toLowerCase().includes('carpet'));
-    if (bathMatIndex === -1 || carpetIndex === -1 || bathMatIndex === carpetIndex + 1) {
-      return category;
-    }
-    const [bathMat] = subs.splice(bathMatIndex, 1);
-    const newCarpetIndex = subs.findIndex((s) => s.subCategoryName.toLowerCase().includes('carpet'));
-    subs.splice(newCarpetIndex + 1, 0, bathMat);
+    const isHomeDecor = `${category.categorySlug} ${category.categoryName}`.toLowerCase().includes('home');
+    if (!isHomeDecor) return category;
+
+    const rank = (name: string) => {
+      const lower = name.toLowerCase();
+      const idx = HOME_DECOR_ORDER.findIndex((key) => lower.includes(key));
+      return idx === -1 ? HOME_DECOR_ORDER.length : idx;
+    };
+
+    const subs = [...category.subCategories].sort((a, b) => rank(a.subCategoryName) - rank(b.subCategoryName));
     return { ...category, subCategories: subs };
   });
 
-export const Collections: React.FC = () => {
+interface CollectionsProps {
+  // Navigates to the same deep-linked /collections/:categorySlug/:subCategorySlug
+  // detail page that clicking a sub-category inside /collections itself opens.
+  onOpenSubCategory: (categorySlug: string, subCategorySlug: string) => void;
+}
+
+export const Collections: React.FC<CollectionsProps> = ({ onOpenSubCategory }) => {
   const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
   const [homeCategories, setHomeCategories] = useState<ApiHomeCategory[]>([]);
 
@@ -67,7 +90,7 @@ export const Collections: React.FC = () => {
       .then((res: { data?: { data?: ApiHomeCategory[] } }) => {
         if (cancelled) return;
         const list = res?.data?.data ?? [];
-        if (list.length > 0) setHomeCategories(reorderBathMats(list));
+        if (list.length > 0) setHomeCategories(reorderHomeDecor(list));
       })
       .catch((err) => {
         console.error('Failed to load home collections.', err);
@@ -227,19 +250,8 @@ export const Collections: React.FC = () => {
   const [modalProducts, setModalProducts] = useState<Product[]>([]);
   const [loadingModalKey, setLoadingModalKey] = useState<string | null>(null);
 
-  const handleSubCategoryClick = async (category: ApiHomeCategory, sub: ApiHomeSubCategory) => {
-    setLoadingModalKey(sub.subCatID);
-    try {
-      const res = await getProductList(category.categorySlug, sub.subCategorySlug);
-      const list = res?.data?.data ?? [];
-      setModalProducts(list.map(mapApiProduct));
-    } catch (err) {
-      console.error('Failed to load products for this sub-category.', err);
-      setModalProducts([]);
-    } finally {
-      setLoadingModalKey(null);
-      setSelectedCategory(sub.subCategoryName);
-    }
+  const handleSubCategoryClick = (category: ApiHomeCategory, sub: ApiHomeSubCategory) => {
+    onOpenSubCategory(category.categorySlug, sub.subCategorySlug);
   };
 
   const handleSeasonalBannerClick = async (category: { name: string }) => {
