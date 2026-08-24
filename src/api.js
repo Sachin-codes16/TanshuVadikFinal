@@ -1,7 +1,39 @@
 
 // api.tanshuvaidik.com does not accept HTTPS connections (port 443 is
-// unreachable); the backend only serves over plain HTTP.
-export const BASE_URL = import.meta.env.DEV ? '' : 'http://api.tanshuvaidik.com';
+// unreachable), so the browser can never call it directly from an HTTPS
+// page (mixed-content blocked). Always call same-origin '/api/...' instead —
+// the dev server (vite.config.ts) and production (vercel.json) both proxy
+// that path server-side to the plain-HTTP backend.
+export const BASE_URL = '';
+
+// Every image/media URL the backend returns is also plain-HTTP-only
+// (http://admin.tanshuvaidik.com/... or http://api.tanshuvaidik.com/...),
+// so it hits the same mixed-content block as the API itself when the page
+// is served over HTTPS (production). Rewrite those absolute URLs to
+// same-origin paths that vercel.json proxies server-side. Dev is untouched
+// since the page itself is HTTP there and the direct URLs already work.
+const MEDIA_HOST_PROXIES = {
+  'http://admin.tanshuvaidik.com': '/media-proxy/admin',
+  'http://api.tanshuvaidik.com': '/media-proxy/api',
+};
+
+function rewriteMediaUrls(value) {
+  if (typeof value === 'string') {
+    for (const [host, proxyPrefix] of Object.entries(MEDIA_HOST_PROXIES)) {
+      if (value.startsWith(`${host}/`)) {
+        return `${proxyPrefix}${value.slice(host.length)}`;
+      }
+    }
+    return value;
+  }
+  if (Array.isArray(value)) return value.map(rewriteMediaUrls);
+  if (value && typeof value === 'object') {
+    const out = {};
+    for (const key of Object.keys(value)) out[key] = rewriteMediaUrls(value[key]);
+    return out;
+  }
+  return value;
+}
 
 const wait = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
 
@@ -23,7 +55,8 @@ export async function apiRequest(endpoint, options = {}) {
       const response = await fetch(url, fetchOptions);
 
       if (response.ok) {
-        return response.json();
+        const data = await response.json();
+        return import.meta.env.DEV ? data : rewriteMediaUrls(data);
       }
 
       lastError = new Error(`API request failed: ${response.status} ${response.statusText}`);

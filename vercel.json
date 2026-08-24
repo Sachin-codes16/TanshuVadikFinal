@@ -1,0 +1,16 @@
+{
+  "rewrites": [
+    {
+      "source": "/api/:path*",
+      "destination": "http://api.tanshuvaidik.com/api/:path*"
+    },
+    {
+      "source": "/media-proxy/admin/:path*",
+      "destination": "http://admin.tanshuvaidik.com/:path*"
+    },
+    {
+      "source": "/media-proxy/api/:path*",
+      "destination": "http://api.tanshuvaidik.com/:path*"
+    }
+  ]
+}
