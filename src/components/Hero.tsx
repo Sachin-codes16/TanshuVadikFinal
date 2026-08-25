@@ -1,7 +1,11 @@
 import React from 'react';
 import { ChevronDown, Play } from 'lucide-react';
 import { motion } from 'motion/react';
-import bannerDogVideo from "../assets/images/banner-dog .mp4";
+import bannerDogVideo from "../assets/images/banner-dog.mp4";
+
+const scrollToOurStory = () => {
+  document.getElementById('our-story')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+};
 
 export const Hero: React.FC = () => {
   return (
@@ -76,13 +80,13 @@ export const Hero: React.FC = () => {
             >
               EXPLORE COLLECTIONS
             </a>
-            <a
-              href="#heritage"
+            <button
+              onClick={scrollToOurStory}
               className="px-8 py-4 border border-white/40 hover:border-white hover:bg-white/5 text-white font-button text-[11px] tracking-widest text-center transition-all duration-300 rounded-none cursor-pointer flex items-center justify-center gap-2"
             >
               <Play size={12} fill="currentColor" />
               WATCH OUR STORY
-            </a>
+            </button>
           </motion.div>
         </div>
 

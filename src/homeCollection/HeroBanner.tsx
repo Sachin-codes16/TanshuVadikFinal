@@ -9,7 +9,10 @@ const extractBannerImage = (item: Record<string, unknown>): string | undefined =
   return typeof candidate === 'string' && candidate.length > 0 ? candidate : undefined;
 };
 
-export const HeroBanner: React.FC<{ onExploreCollections: () => void }> = ({ onExploreCollections }) => {
+export const HeroBanner: React.FC<{ onExploreCollections: () => void; onWatchOurStory?: () => void }> = ({
+  onExploreCollections,
+  onWatchOurStory,
+}) => {
   const [slides, setSlides] = useState<string[]>([]);
   const [activeSlide, setActiveSlide] = useState(0);
   const previousSlideRef = useRef(0);
@@ -100,7 +103,10 @@ export const HeroBanner: React.FC<{ onExploreCollections: () => void }> = ({ onE
             >
               Explore Collections
             </button>
-            <button className="flex items-center gap-2 font-sans text-xs font-bold tracking-widest uppercase text-white hover:text-[#E9C2AF] transition-colors cursor-pointer">
+            <button
+              onClick={onWatchOurStory}
+              className="flex items-center gap-2 font-sans text-xs font-bold tracking-widest uppercase text-white hover:text-[#E9C2AF] transition-colors cursor-pointer"
+            >
               <span className="w-8 h-8 rounded-full border border-white/50 flex items-center justify-center">
                 <Play size={12} fill="currentColor" />
               </span>

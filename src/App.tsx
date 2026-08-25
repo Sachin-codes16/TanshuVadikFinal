@@ -95,6 +95,18 @@ export default function App() {
     }
   };
 
+  // "Watch Our Story" on the Collections page banner points at the video
+  // section, which only lives inline on the home page — same hop-then-scroll
+  // pattern as handleNavigateCertifications above.
+  const handleNavigateOurStory = () => {
+    if (page === 'home') {
+      document.getElementById('our-story')?.scrollIntoView({ behavior: 'smooth' });
+    } else {
+      setPendingScrollTarget('our-story');
+      navigate('home');
+    }
+  };
+
   return (
     <InquiryProvider>
       <div id="app-root" className="min-h-screen flex flex-col bg-[#FAF8F5] text-[#2C2623] font-sans overflow-x-hidden selection:bg-[#8F533C] selection:text-white">
@@ -115,7 +127,7 @@ export default function App() {
           ) : page === 'about' ? (
             <AboutPage />
           ) : page === 'collections' ? (
-            <HomeCollectionPage />
+            <HomeCollectionPage onNavigateOurStory={handleNavigateOurStory} />
           ) : page === 'blogs' ? (
             <BlogsPage />
           ) : page === 'capabilities' ? (
@@ -139,7 +151,7 @@ export default function App() {
               <Collections onOpenSubCategory={handleOpenCollectionSubCategory} />
 
               {/* High Fidelity Video / Story Banner */}
-              <VideoBanner />
+              <VideoBanner youtubeId="N8M9PQCyIRs" />
 
               {/* Core Handloom & Weaver Narrative (The Heart Behind Every Piece) */}
               <About />

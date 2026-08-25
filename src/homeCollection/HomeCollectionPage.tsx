@@ -18,9 +18,12 @@ interface HomeCollectionPageProps {
   // "OUR COLLECTIONS" section) navigates straight into a subcategory's URL instead
   // of going through the CollectionCardsSection click that normally supplies this.
   initialCategory?: OpenCategory;
+  // "Watch Our Story" on the banner needs to hop back to the home page's video
+  // section, which doesn't exist on this page.
+  onNavigateOurStory?: () => void;
 }
 
-export const HomeCollectionPage: React.FC<HomeCollectionPageProps> = ({ initialCategory }) => {
+export const HomeCollectionPage: React.FC<HomeCollectionPageProps> = ({ initialCategory, onNavigateOurStory }) => {
   const cardsRef = useRef<HTMLDivElement>(null);
   const [category, setCategory] = useState<OpenCategory | null>(() => {
     if (initialCategory) return initialCategory;
@@ -83,7 +86,7 @@ export const HomeCollectionPage: React.FC<HomeCollectionPageProps> = ({ initialC
 
   return (
     <div className="pt-16 sm:pt-[76px]">
-      <HeroBanner onExploreCollections={scrollToCards} />
+      <HeroBanner onExploreCollections={scrollToCards} onWatchOurStory={onNavigateOurStory} />
       <div ref={cardsRef}>
         <CollectionCardsSection
           onOpenHomeCollection={openCategory}

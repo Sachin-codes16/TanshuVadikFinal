@@ -3,12 +3,13 @@ import { motion } from 'motion/react';
 import { ArrowRight } from 'lucide-react';
 
 import { getCategoryList } from '../api';
-import homeCollectionImage from '../assets/collection/HomeCollection.jpg';
-import petUtilityImage from '../assets/collection/Petutility.jpg';
-import seasonalCollectionImage from '../assets/collection/SesonalCollection.jpg';
-import homeIcon from '../assets/Icons/HomeCollection.png';
-import petIcon from '../assets/Icons/Petutility.png';
-import seasonalIcon from '../assets/Icons/Sesonal.png';
+// Static fallback assets — only used by the commented-out FALLBACK_CARDS below.
+// import homeCollectionImage from '../assets/collection/HomeCollection.jpg';
+// import petUtilityImage from '../assets/collection/Petutility.jpg';
+// import seasonalCollectionImage from '../assets/collection/SesonalCollection.jpg';
+// import homeIcon from '../assets/Icons/HomeCollection.png';
+// import petIcon from '../assets/Icons/Petutility.png';
+// import seasonalIcon from '../assets/Icons/Sesonal.png';
 
 
 interface CardConfig {
@@ -30,36 +31,38 @@ interface ApiCategory {
   categorySlug: string;
 }
 
-// Shown until the category-list API responds, and kept as a fallback if it fails.
-const FALLBACK_CARDS: CardConfig[] = [
-  {
-    key: 'home-decor',
-    categorySlug: 'home-collection-1',
-    title: 'Home Collection',
-    description: 'Beautiful handcrafted home décor designed for comfort, style, and everyday living.',
-    cta: 'Explore Home Collection',
-    image: homeCollectionImage,
-    icon: <img src={homeIcon} alt="" className="w-7 h-7 object-contain" />,
-  },
-  {
-    key: 'pet-living',
-    categorySlug: 'pet-utility-1',
-    title: 'Pet Utility',
-    description: 'Premium handmade pet essentials combining comfort, durability and elegant design.',
-    cta: 'Explore Pet Utility',
-    image: petUtilityImage,
-    icon: <img src={petIcon} alt="" className="w-7 h-7 object-contain" />,
-  },
-  {
-    key: 'seasonal',
-    categorySlug: 'seasonal-collection-1',
-    title: 'Seasonal Collection',
-    description: 'Fresh collections inspired by every season and celebration around the world.',
-    cta: 'Explore Seasonal Collection',
-    image: seasonalCollectionImage,
-    icon: <img src={seasonalIcon} alt="" className="w-7 h-7 object-contain" />,
-  },
-];
+// Static fallback cards — commented out so the section never shows hardcoded
+// content that then gets visibly replaced by the API response. A loading
+// state is shown instead until the real category-list data arrives.
+// const FALLBACK_CARDS: CardConfig[] = [
+//   {
+//     key: 'home-decor',
+//     categorySlug: 'home-collection-1',
+//     title: 'Home Collection',
+//     description: 'Beautiful handcrafted home décor designed for comfort, style, and everyday living.',
+//     cta: 'Explore Home Collection',
+//     image: homeCollectionImage,
+//     icon: <img src={homeIcon} alt="" className="w-7 h-7 object-contain" />,
+//   },
+//   {
+//     key: 'pet-living',
+//     categorySlug: 'pet-utility-1',
+//     title: 'Pet Utility',
+//     description: 'Premium handmade pet essentials combining comfort, durability and elegant design.',
+//     cta: 'Explore Pet Utility',
+//     image: petUtilityImage,
+//     icon: <img src={petIcon} alt="" className="w-7 h-7 object-contain" />,
+//   },
+//   {
+//     key: 'seasonal',
+//     categorySlug: 'seasonal-collection-1',
+//     title: 'Seasonal Collection',
+//     description: 'Fresh collections inspired by every season and celebration around the world.',
+//     cta: 'Explore Seasonal Collection',
+//     image: seasonalCollectionImage,
+//     icon: <img src={seasonalIcon} alt="" className="w-7 h-7 object-contain" />,
+//   },
+// ];
 
 interface CollectionCardsSectionProps {
   onOpenHomeCollection: (categorySlug: string, categoryName: string, categoryImage: string, categoryDescription: string) => void;
@@ -82,13 +85,15 @@ export const CollectionCardsSection: React.FC<CollectionCardsSectionProps> = ({
   onOpenHomeCollection,
   onOpenSeasonalCollection,
 }) => {
-  const [cards, setCards] = useState<CardConfig[]>(FALLBACK_CARDS);
+  const [cards, setCards] = useState<CardConfig[]>([]);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     let cancelled = false;
 
     getCategoryList()
       .then((res: { data?: { data?: ApiCategory[] } }) => {
+        if (cancelled) return;
         const categories = res?.data?.data ?? [];
         const mapped = categories.map((item): CardConfig => ({
           key: resolveCollectionKey(item.categorySlug, item.categoryName) ?? item.categorySlug,
@@ -99,13 +104,13 @@ export const CollectionCardsSection: React.FC<CollectionCardsSectionProps> = ({
           image: item.catImage,
           icon: <img src={item.catIcon} alt="" className="w-7 h-7 object-contain" />,
         }));
-
-        if (!cancelled) {
-          setCards(mapped);
-        }
+        setCards(mapped);
       })
       .catch((err) => {
-        console.error('Failed to load product categories, using fallback cards.', err);
+        console.error('Failed to load product categories.', err);
+      })
+      .finally(() => {
+        if (!cancelled) setLoading(false);
       });
 
     return () => {
@@ -124,9 +129,13 @@ export const CollectionCardsSection: React.FC<CollectionCardsSectionProps> = ({
   return (
     <section className="bg-[#FAF8F5] pb-2">
       <div className="w-full px-6 sm:px-10 lg:px-20 pt-8">
+        {loading && (
+          <p className="text-center font-sans text-sm text-[#615751] py-10">Loading collections...</p>
+        )}
+
         {/* Cards */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
-          {cards.map((card, index) => (
+          {!loading && cards.map((card, index) => (
             <motion.div
               key={card.key}
               initial={{ opacity: 0, y: 15 }}

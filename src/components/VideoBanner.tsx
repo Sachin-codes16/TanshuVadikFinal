@@ -11,7 +11,7 @@ export const VideoBanner: React.FC<VideoBannerProps> = ({ youtubeId }) => {
 
   return (
     <>
-      <section className="bg-[#FAF8F5] py-3 sm:py-4">
+      <section id="our-story" className="scroll-mt-20 bg-[#FAF8F5] py-3 sm:py-4">
         <div className="w-full">
           <div className="relative min-h-[360px] sm:h-[420px] py-16 sm:py-0 flex items-center justify-center overflow-hidden bg-[#2C2623]">
             {/* Background image with parallax-like styling and deep dark overlay */}
