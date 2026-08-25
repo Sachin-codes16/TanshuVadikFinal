@@ -59,9 +59,21 @@ export default function App() {
     if (page !== 'home' || !pendingScrollTarget) return;
     const id = pendingScrollTarget;
     setPendingScrollTarget(null);
-    requestAnimationFrame(() => {
-      document.getElementById(id)?.scrollIntoView({ behavior: 'smooth' });
-    });
+
+    // Sections above the target (e.g. Collections) fetch their content
+    // async and grow taller after the first scroll fires, which pushes the
+    // target out from under the viewport. Keep re-aligning for a bit so the
+    // scroll lands correctly once that layout shift has settled.
+    let attempts = 0;
+    const maxAttempts = 15;
+    const alignToTarget = () => {
+      document.getElementById(id)?.scrollIntoView({ behavior: attempts === 0 ? 'smooth' : 'auto' });
+      attempts += 1;
+      if (attempts < maxAttempts) {
+        setTimeout(alignToTarget, 200);
+      }
+    };
+    requestAnimationFrame(alignToTarget);
   }, [page, pendingScrollTarget]);
 
   useEffect(() => {
