@@ -37,18 +37,18 @@ export const Navbar: React.FC<NavbarProps> = ({
       id="navbar-root"
       className="fixed top-0 left-0 w-full z-50 bg-[#FAF8F5] border-b border-[#EBE4DC] py-4 shadow-xs"
     >
-      <div className="w-full px-4 sm:px-6 lg:px-[80px] flex items-center justify-between">
+      <div className="w-full px-1.25 sm:px-6 lg:px-[80px] flex items-center justify-between">
 
         {/* Brand Logo exactly as requested */}
         <a
           href="#"
           onClick={onNavigateHome}
-          className="flex items-center select-none group shrink-0 mr-5 lg:mr-9"
+          className="flex items-center select-none group shrink-0 mr-2 sm:mr-5 lg:mr-9"
         >
           <img
             src={tanshuLogo}
             alt="Tanshu Vaidik India Pvt. Ltd."
-            className="h-12 sm:h-14 md:h-16 w-auto object-contain"
+            className="h-9 sm:h-14 md:h-16 w-auto object-contain"
           />
         </a>
 
@@ -109,13 +109,13 @@ export const Navbar: React.FC<NavbarProps> = ({
         </div>
 
         {/* Action Button & Inquiry Badge */}
-        <div className="flex items-center gap-2 sm:gap-3 shrink-0 ml-4 lg:ml-10">
-          
+        <div className="flex items-center gap-1.5 sm:gap-3 shrink-0 ml-0 sm:ml-4 lg:ml-10">
+
           {/* REQUEST CATALOGUE CTA (with optional badge) */}
           <button
             id="rfq-trigger-btn"
             onClick={() => setIsPortalOpen(true)}
-            className="relative flex items-center gap-1.5 sm:gap-2 border border-[#8F533C] bg-[#8F533C] hover:bg-[#2C2623] hover:border-[#2C2623] text-white px-3 lg:px-5 py-2 sm:py-2.5 font-sans text-[9px] lg:text-[10px] font-bold tracking-widest transition-all duration-300 rounded-none cursor-pointer shadow-xs shrink-0"
+            className="relative flex items-center gap-1.5 sm:gap-2 border border-[#8F533C] bg-[#8F533C] hover:bg-[#2C2623] hover:border-[#2C2623] text-white px-2.5 sm:px-3 lg:px-5 py-2 sm:py-2.5 font-sans text-[9px] lg:text-[10px] font-bold tracking-widest transition-all duration-300 rounded-none cursor-pointer shadow-xs shrink-0"
           >
             <ClipboardList size={11} className="shrink-0" />
             <span className="hidden min-[380px]:inline">REQUEST CATALOGUE</span>
@@ -141,7 +141,7 @@ export const Navbar: React.FC<NavbarProps> = ({
             href="https://wa.me/61299999166"
             target="_blank"
             rel="noopener noreferrer"
-            className="w-8 h-8 sm:w-10 sm:h-10 flex items-center justify-center border border-[#EBE4DC] hover:border-[#8F533C] hover:text-[#8F533C] text-[#2C2623] transition-colors shrink-0 ml-2"
+            className="w-8 h-8 sm:w-10 sm:h-10 flex items-center justify-center border border-[#EBE4DC] hover:border-[#8F533C] hover:text-[#8F533C] text-[#2C2623] transition-colors shrink-0"
             title="Chat with us on WhatsApp"
           >
             <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor">
@@ -152,10 +152,10 @@ export const Navbar: React.FC<NavbarProps> = ({
           {/* Mobile Menu Icon */}
           <button
             onClick={() => setIsOpen(!isOpen)}
-            className="md:hidden text-[#2C2623] hover:text-[#8F533C] p-1 transition-colors shrink-0"
+            className="md:hidden flex items-center justify-center text-[#2C2623] hover:text-[#8F533C] w-9 h-9 sm:w-10 sm:h-10 transition-colors shrink-0"
             aria-label="Toggle Menu"
           >
-            {isOpen ? <X size={22} /> : <Menu size={22} />}
+            {isOpen ? <X className="w-5 h-5 sm:w-6 sm:h-6" /> : <Menu className="w-5 h-5 sm:w-6 sm:h-6" />}
           </button>
         </div>
       </div>

@@ -1,6 +1,4 @@
-import React, { useLayoutEffect, useRef, useState } from 'react';
-import { ExternalLink } from 'lucide-react';
-import storyImage from '../assets/images/Carpet.jpeg';
+import React from 'react';
 import wovenIcon from '../assets/Cpablities icon/woven.png';
 import dyeingIcon from '../assets/Cpablities icon/image.png';
 import braidedIcon from '../assets/Cpablities icon/braided.png';
@@ -12,124 +10,105 @@ import stitchedIcon from '../assets/Cpablities icon/stitched.png';
 import printedIcon from '../assets/Cpablities icon/printed.png';
 import customIcon from '../assets/Cpablities icon/custom.png';
 
-const styleIcon = (src: string, alt: string) => (
-  <img src={src} alt={alt} className="w-[22px] h-[22px] object-contain" />
-);
-
-// Pulls the image up on desktop so its top lines up with the "Our Manufacturing" heading
-// instead of the content box below it; height grows by the same amount to keep the bottom aligned.
-const IMAGE_LIFT_PX = 48;
+import wovenPhoto from '../assets/Cpablities icon/handowvenimage .jpg';
+import braidedPhoto from '../assets/Manufacturing/braided (1).jpg';
+import stitchedPhoto from '../assets/Manufacturing/image copy.jpg';
+import tuftedPhoto from '../assets/Capablities/handcrafted.jpeg';
+import knottedPhoto from '../assets/Capablities/cpapiblitieshero.jpg';
+import macramePhoto from '../assets/Capablities/Sustaibility.jpg';
+import juteWeavingPhoto from '../assets/Customisation-Studio/labeling.jpg';
+import printedPhoto from '../assets/Customisation-Studio/Materals.jpg';
+import dyeingPhoto from '../assets/finalimages1/wool.jpg';
+import customPhoto from '../assets/Capablities/ChatGPT Image Aug 1, 2026, 01_27_13 PM.jpg';
 
 interface StorySection {
   id: string;
-  icon: React.ReactNode;
+  icon: string;
   label: string;
+  image: string;
   description: string;
-  highlights?: string[];
-  pdfUrl?: string;
 }
 
 const sections: StorySection[] = [
   {
     id: 'story',
-    icon: styleIcon(wovenIcon, 'Hand Woven'),
+    icon: wovenIcon,
     label: 'Hand Woven',
+    image: wovenPhoto,
     description:
       'Every Handwoven we manufacture begins with careful design thinking, blending traditional craftsmanship with modern functionality for global home and lifestyle markets.',
-    highlights: [
-      'Premium quality',
-      'Soft texture for superior comfort',
-      'Strong & durable for long-lasting use',
-      'Neutral design fits every interior',
-      'Sustainable & eco-friendly materials',
-    ],
   },
   {
     id: 'Braided',
-    icon: styleIcon(braidedIcon, 'Braided'),
+    icon: braidedIcon,
     label: 'Braided',
+    image: braidedPhoto,
     description:
       'Crafted from natural, recycled & sustainable fibers including cotton, jute, wool and linen, chosen for durability, texture and a natural finish.',
   },
   {
     id: 'Hand tufted',
-    icon: styleIcon(tuftedIcon, 'Hand tufted'),
+    icon: tuftedIcon,
     label: 'Hand tufted',
+    image: tuftedPhoto,
     description:
       'Hand-finished construction built for durability and consistent quality at scale, combining traditional technique with careful quality checks at every stage.',
   },
   {
     id: 'Hand Knotted',
-    icon: styleIcon(knottedIcon, 'Hand Knotted'),
+    icon: knottedIcon,
     label: 'Hand Knotted',
+    image: knottedPhoto,
     description: 'Available in a wide range of standard and fully custom sizes to match buyer specifications.',
   },
   {
     id: 'Macrame',
-    icon: styleIcon(macrameIcon, 'Macrame'),
+    icon: macrameIcon,
     label: 'Macrame',
+    image: macramePhoto,
     description:
       'Spot clean with a damp cloth. Avoid harsh chemicals and prolonged direct sunlight to preserve colour and texture. Professional cleaning recommended for deep stains.',
   },
   {
     id: 'Jute Weaving',
-    icon: styleIcon(juteWeavingIcon, 'Jute Weaving'),
+    icon: juteWeavingIcon,
     label: 'Jute Weaving',
+    image: juteWeavingPhoto,
     description:
       'Compression-packed in moisture-resistant wrapping with reinforced cartons, tested for safe, cost-efficient global shipping.',
-    pdfUrl: '/documents/sample-spec-sheet.pdf',
   },
   {
     id: 'Stitched',
-    icon: styleIcon(stitchedIcon, 'Stitched'),
+    icon: stitchedIcon,
     label: 'Stitched',
+    image: stitchedPhoto,
     description:
       'Minimum order quantities and lead times are tailored to each product category and order volume — get in touch for a tailored quote.',
   },
   {
     id: 'Printed',
-    icon: styleIcon(printedIcon, 'Printed'),
+    icon: printedIcon,
     label: 'Printed',
+    image: printedPhoto,
     description: 'Manufactured in a facility that follows ISO 9001:2015 quality management practices.',
   },
-   {
+  {
     id: 'Dyeing & Finishing',
-    icon: styleIcon(dyeingIcon, 'Dyeing & Finishing'),
+    icon: dyeingIcon,
     label: 'Dyeing & Finishing',
+    image: dyeingPhoto,
     description: 'Manufactured in a facility that follows ISO 9001:2015 quality management practices.',
   },
-   {
+  {
     id: 'Custom Construction',
-    icon: styleIcon(customIcon, 'Custom Construction'),
+    icon: customIcon,
     label: 'Custom Construction',
+    image: customPhoto,
     description: 'Manufactured in a facility that follows ISO 9001:2015 quality management practices.',
   },
 ];
 
 export const CapabilitiesProductStory: React.FC = () => {
-  const [activeId, setActiveId] = useState(sections[0].id);
-  const active = sections.find((section) => section.id === activeId) ?? sections[0];
-  const contentRef = useRef<HTMLDivElement | null>(null);
-  const sidebarRef = useRef<HTMLDivElement | null>(null);
-  const [contentHeight, setContentHeight] = useState<number | undefined>(undefined);
-
-  useLayoutEffect(() => {
-    const measure = () => {
-      if (window.innerWidth >= 1024 && contentRef.current && sidebarRef.current) {
-        const measured = Math.max(
-          contentRef.current.getBoundingClientRect().height,
-          sidebarRef.current.getBoundingClientRect().height,
-        );
-        setContentHeight(measured);
-      } else {
-        setContentHeight(undefined);
-      }
-    };
-    measure();
-    window.addEventListener('resize', measure);
-    return () => window.removeEventListener('resize', measure);
-  }, [activeId]);
-
   return (
     <section className="bg-white pt-8 pb-6">
       <div className="w-full px-6 sm:px-[80px]">
@@ -137,57 +116,25 @@ export const CapabilitiesProductStory: React.FC = () => {
           Our Manufacturing Styles &amp; Techniques
         </h2>
       </div>
-      <div className="w-full px-5 sm:px-[80px] grid grid-cols-1 lg:grid-cols-[220px_1fr_1.1fr] gap-8 items-start">
-        {/* Sidebar */}
-        <div ref={sidebarRef} className="flex flex-col gap-0.5 bg-[#FAF8F5] rounded-2xl shadow-lg p-3">
-          {sections.map((section, index) => (
-            <React.Fragment key={section.id}>
-              {index > 0 && <div className="mx-3 border-t border-[#DCD3C7]" />}
-              <button
-                onClick={() => setActiveId(section.id)}
-                className={`flex items-center gap-3 px-3 py-3 text-left font-sans text-sm transition-colors cursor-pointer border-l-2 ${
-                  active.id === section.id
-                    ? 'bg-[#F4EFEA] text-[#2C2623] font-bold border-[#8F533C]'
-                    : 'text-[#615751] hover:bg-[#FAF8F5] border-transparent'
-                }`}
-              >
-                <span className="text-[#8F533C] shrink-0">{section.icon}</span>
+      <div className="w-full px-5 sm:px-[80px] grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-x-6 gap-y-10">
+        {sections.map((section) => (
+          <div key={section.id} className="group relative aspect-3/4 overflow-hidden rounded-xl bg-[#F4EFEA] border border-[#EBE4DC] cursor-pointer">
+            <img
+              src={section.image}
+              alt={section.label}
+              className="w-full h-full object-cover transition-transform duration-700 ease-out group-hover:scale-110"
+            />
+            <div className="absolute inset-x-0 bottom-0 h-2/3 bg-gradient-to-t from-black/90 to-transparent" />
+            <div className="absolute inset-x-0 bottom-0 p-3 sm:p-4 transition-transform duration-500 ease-out group-hover:-translate-y-2">
+              <h4 className="font-sans text-sm sm:text-base font-bold text-white uppercase tracking-wide">
                 {section.label}
-              </button>
-            </React.Fragment>
-          ))}
-        </div>
-
-        {/* Content */}
-        <div ref={contentRef} className="min-w-0 bg-[#FAF8F5] rounded-2xl shadow-lg px-15 pt-6 pb-15 lg:min-h-[200px]">
-          <h3 className="font-sans text-sm font-bold tracking-widest uppercase text-[#2C2623] mb-4">
-            {active.label}
-          </h3>
-          <p className="font-sans text-sm text-[#615751] leading-relaxed">{active.description}</p>
-
-          {active.pdfUrl && (
-            <a
-              href={active.pdfUrl}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="inline-flex items-center gap-2 mt-6 px-6 py-3 border border-[#8F533C] text-[#8F533C] hover:bg-[#8F533C] hover:text-white font-button text-xs tracking-widest uppercase transition-colors cursor-pointer"
-            >
-              View More <ExternalLink size={16} />
-            </a>
-          )}
-        </div>
-
-        {/* Image */}
-        <div
-          className="relative aspect-[4/3] lg:aspect-auto overflow-hidden bg-[#F4EFEA] lg:-mt-12"
-          style={contentHeight ? { height: contentHeight + IMAGE_LIFT_PX } : undefined}
-        >
-          <img
-            src={storyImage}
-            alt="Tanshu Vaidik craftsmanship"
-            className="w-full h-full object-cover scale-[1.8] object-center"
-          />
-        </div>
+              </h4>
+              <p className="mt-1 font-sans text-[11px] sm:text-xs font-bold text-white leading-snug">
+                {section.description}
+              </p>
+            </div>
+          </div>
+        ))}
       </div>
     </section>
   );
