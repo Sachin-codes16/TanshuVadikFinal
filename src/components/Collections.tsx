@@ -10,11 +10,6 @@ import { mapApiProduct } from '../homeCollection/productMapper';
 import springCollection from "../assets/collection/Spring.jpg"
 import fallCollection from "../assets/collection/Spring2.jpg"
 
-const localImages = import.meta.glob('../assets/images/*', { eager: true, import: 'default' }) as Record<string, string>;
-const img = (filename: string): string => {
-  const match = Object.entries(localImages).find(([path]) => path.endsWith(`/${filename}`));
-  return match ? match[1] : `/src/assets/images/${filename}`;
-};
 import { motion, AnimatePresence } from 'motion/react';
 
 interface CategoryCard {
@@ -82,6 +77,7 @@ interface CollectionsProps {
 export const Collections: React.FC<CollectionsProps> = ({ onOpenSubCategory }) => {
   const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
   const [homeCategories, setHomeCategories] = useState<ApiHomeCategory[]>([]);
+  const [homeCategoriesLoading, setHomeCategoriesLoading] = useState(true);
 
   // Nested loop straight from /api/home: categories -> subCategories.
   useEffect(() => {
@@ -91,10 +87,15 @@ export const Collections: React.FC<CollectionsProps> = ({ onOpenSubCategory }) =
       .then((res: { data?: { data?: ApiHomeCategory[] } }) => {
         if (cancelled) return;
         const list = res?.data?.data ?? [];
-        if (list.length > 0) setHomeCategories(reorderHomeDecor(list));
+        setHomeCategories(reorderHomeDecor(list));
       })
       .catch((err) => {
+        if (cancelled) return;
         console.error('Failed to load home collections.', err);
+        setHomeCategories([]);
+      })
+      .finally(() => {
+        if (!cancelled) setHomeCategoriesLoading(false);
       });
 
     return () => {
@@ -112,95 +113,6 @@ export const Collections: React.FC<CollectionsProps> = ({ onOpenSubCategory }) =
 
   const { addToCart, setIsPortalOpen } = useInquiry();
 
-  // Define Home Decor categories with counts and exact mockup images
-  const homeDecorCategories: CategoryCard[] = useMemo(() => [
-    {
-      name: 'Rugs',
-      image: img('WhatsApp Image 2026-07-20 at 11.45.28.jpeg'),
-      itemCount: products.filter(p => p.subcategory === 'Rugs').length
-    },
-    {
-      name: 'Carpets',
-      image: img('WhatsApp Image 2026-07-18 at 11.12.09.jpeg'),
-      itemCount: products.filter(p => p.subcategory === 'Carpets').length
-    },
-    {
-      name: 'Bath Mats',
-      image: img('WhatsApp Image 2026-07-17 at 15.35.01.jpeg'),
-      itemCount: products.filter(p => p.subcategory === 'Bath Mats').length
-    },
-    {
-      name: 'Cushions',
-      image: img('cushion.jpeg'),
-      itemCount: products.filter(p => p.subcategory === 'Cushions').length
-    },
-    {
-      name: 'Throws',
-      image: img('WhatsApp Image 2026-07-17 at 15.35.38.jpeg'),
-      itemCount: products.filter(p => p.subcategory === 'Kitchen Towel').length
-    },
-    {
-      name: 'Basket',
-      image: img('WhatsApp Image 2026-07-17 at 18.18.39.jpeg'),
-      itemCount: products.filter(p => p.subcategory === 'Basket').length
-    },
-    {
-      name: 'Planters',
-      image: img('WhatsApp Image 2026-07-17 at 15.35.57.jpeg'),
-      itemCount: products.filter(p => p.subcategory === 'Planters').length
-    },
-    {
-      name: 'Table Linen',
-      image: img('WhatsApp Image 2026-07-17 at 15.40.03.jpeg'),
-      itemCount: products.filter(p => p.subcategory === 'Table Linen').length
-    },
-    {
-      name: 'Kitchen Linen',
-      image: img('WhatsApp Image 2026-07-17 at 15.40.18.jpeg'),
-      itemCount: products.filter(p => p.subcategory === 'Apron').length
-    },
-    {
-      name: 'Tote Bags',
-      image: img('WhatsApp Image 2026-07-17 at 15.38.11.jpeg'),
-      itemCount: products.filter(p => p.subcategory === 'Tote Bags').length
-    },
-    {
-      name: 'Wall Décor',
-      image: img('WhatsApp Image 2026-07-17 at 15.37.21.jpeg'),
-      itemCount: products.filter(p => p.subcategory === 'Wall Décor').length
-    },
-    {
-      name: 'Home Accessories',
-      image: img('ChatGPT Image Jul 21, 2026, 11_56_04 AM.jpg'),
-      itemCount: products.filter(p => p.subcategory === 'Table Placemat').length
-    }
-  ], []);
-
-  // Define Pet Living categories with counts and exact mockup images
-  const petLivingCategories: CategoryCard[] = useMemo(() => [
-    {
-      name: 'Pet Beds',
-      image: img('WhatsApp Image 2026-07-17 at 15.38.35.jpeg'),
-      itemCount: products.filter(p => p.subcategory === 'Pet Beds').length
-    },
-      {
-      name: 'Pet Mat',
-      image: img('WhatsApp Image 2026-07-17 at 15.38.51.jpeg'),
-      itemCount: products.filter(p => p.subcategory === 'Pet Mat').length
-    },
-   
-    {
-      name: 'Pet Toy Baskets',
-      image: img('WhatsApp Image 2026-07-17 at 15.34.24.jpeg'),
-      itemCount: products.filter(p => p.subcategory === 'Pet Toy Baskets').length
-    },
-   {
-      name: 'Pet Accessories',
-      image: img('WhatsApp Image 2026-07-17 at 15.36.54.jpeg'),
-      itemCount: products.filter(p => p.subcategory === 'Pet Accessories').length
-    },
-  ], []);
-
   // Define Seasonal categories with counts and newly generated collection images
   const seasonalCategories: CategoryCard[] = useMemo(() => [
     {
@@ -216,34 +128,6 @@ export const Collections: React.FC<CollectionsProps> = ({ onOpenSubCategory }) =
       subtitle: 'Warm, Cozy, Timeless.'
     }
   ], []);
-
-  // Shown until the /api/home response lands, and kept as a fallback if it fails.
-  const fallbackCategories: ApiHomeCategory[] = useMemo(() => [
-    {
-      categoryName: 'HOME DÉCOR COLLECTION',
-      categorySlug: 'home-decor-fallback',
-      subCategories: homeDecorCategories.map((cat) => ({
-        subCatID: cat.name,
-        subCategoryName: cat.name,
-        subCatImg: cat.image,
-        hoverImage: null,
-        subCategorySlug: cat.name.toLowerCase().replace(/\s+/g, '-'),
-      })),
-    },
-    {
-      categoryName: 'PET LIVING COLLECTION',
-      categorySlug: 'pet-living-fallback',
-      subCategories: petLivingCategories.map((cat) => ({
-        subCatID: cat.name,
-        subCategoryName: cat.name,
-        subCatImg: cat.image,
-        hoverImage: null,
-        subCategorySlug: cat.name.toLowerCase().replace(/\s+/g, '-'),
-      })),
-    },
-  ], [homeDecorCategories, petLivingCategories]);
-
-  const categoriesToRender = homeCategories.length > 0 ? homeCategories : fallbackCategories;
 
   // Both the sub-category grid and the seasonal banners open the same showcase
   // modal with real products fetched from /api/product-list — the home page
@@ -341,7 +225,13 @@ export const Collections: React.FC<CollectionsProps> = ({ onOpenSubCategory }) =
         </div>
 
         {/* Categories -> subcategories, straight from /api/home */}
-        {categoriesToRender.map((category) => {
+        {homeCategoriesLoading && (
+          <p className="text-center font-sans text-sm text-[#615751] py-10">Loading collections...</p>
+        )}
+        {!homeCategoriesLoading && homeCategories.length === 0 && (
+          <p className="text-center font-sans text-sm text-[#615751] py-10">No collections available right now.</p>
+        )}
+        {homeCategories.map((category) => {
           const isPetCategory = `${category.categorySlug} ${category.categoryName}`.toLowerCase().includes('pet');
           const sectionSubtitle = isPetCategory
             ? 'Comfort, care and style for pets.'

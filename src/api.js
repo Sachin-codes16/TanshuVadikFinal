@@ -101,19 +101,19 @@ export const getProductDetail = (categorySlug, subCategorySlug, productSlug) =>
 export const filterProductList = (categorySlug, subCategorySlug, payload) =>
   apiPost(`/api/product/filter/${categorySlug}/${subCategorySlug}`, payload);
 
-export const getSizeList = () => apiGet('/api/size-list');
+export const getSizeList = (subCategoryID) => apiGet(`/api/size-list/${subCategoryID}`);
 
-export const getColorList = () => apiGet('/api/color-list');
+export const getColorList = (subCategoryID) => apiGet(`/api/color-list/${subCategoryID}`);
 
-export const getCollectionFilterList = () => apiGet('/api/collection-list');
+export const getCollectionFilterList = (subCategoryID) => apiGet(`/api/collection-list/${subCategoryID}`);
 
 export const getCollectionBanner = () => apiGet('/api/collection/banner');
 
-export const getShapeList = () => apiGet('/api/shape-list');
+export const getShapeList = (subCategoryID) => apiGet(`/api/shape-list/${subCategoryID}`);
 
-export const getWeaveList = () => apiGet('/api/weave-list');
+export const getWeaveList = (subCategoryID) => apiGet(`/api/weave-list/${subCategoryID}`);
 
-export const getMaterialList = () => apiGet('/api/material-list');
+export const getMaterialList = (subCategoryID) => apiGet(`/api/material-list/${subCategoryID}`);
 
 export const getBlogList = () => apiGet('/api/blog-list');
 

@@ -7,47 +7,25 @@ import {
   ChevronLeft,
   ChevronRight,
   ChevronUp,
-  Hand,
-  Layers,
   Leaf,
-  ShieldCheck,
   Globe,
   SlidersHorizontal,
   Truck,
 } from 'lucide-react';
 import { Product, ProductDetailData } from '../types';
-import { products as staticProducts } from '../data';
 import { useInquiry } from '../context/InquiryContext';
 import { ProductStorySection } from './ProductStorySection';
 import { CustomDesignBanner } from './CustomDesignBanner';
-import customColours from '../assets/Customisation-Studio/colors.jpg';
-import customMaterials from '../assets/Customisation-Studio/Materals.jpg';
-import customSizes from '../assets/Customisation-Studio/Sizes.jpg';
-import customCushionOptions from '../assets/Customisation-Studio/CushionOptions.jpg';
-import customBranding from '../assets/Customisation-Studio/Branding.jpg';
-import customLabelling from '../assets/Customisation-Studio/labeling.jpg';
-import customPackaging from '../assets/Customisation-Studio/Packging.jpg';
-import customHangTags from '../assets/Customisation-Studio/hangTags.jpg';
+import { pushCollectionPath } from './collectionRouting';
 
-const introBadges = [
-  { icon: <Hand size={28} strokeWidth={1.5} />, label: 'Handcrafted Excellence' },
-  { icon: <Leaf size={28} strokeWidth={1.5} />, label: 'Natural Materials' },
-  { icon: <Layers size={28} strokeWidth={1.5} />, label: 'Texture & Comfort' },
-  { icon: <ShieldCheck size={28} strokeWidth={1.5} />, label: 'Sustainable Choice' },
-];
-
-// Fixed images per customisation option — same on every product page,
-// not derived from the current product's own gallery.
-const customisationOptions = [
-  { label: 'Colours', image: customColours },
-  { label: 'Materials', image: customMaterials },
-  { label: 'Sizes', image: customSizes },
-  { label: 'Cushion Options', image: customCushionOptions },
-  { label: 'Branding', image: customBranding },
-  { label: 'Labelling', image: customLabelling },
-  { label: 'Packaging', image: customPackaging },
-  { label: 'Hang Tags', image: customHangTags },
-];
+// The API's field names for these arrays aren't confirmed yet, so accept
+// whichever of these common keys shows up.
+const extractLabelledImage = (item: Record<string, unknown>) => {
+  const label = item.label ?? item.name ?? item.title;
+  const image = item.image ?? item.img ?? item.icon ?? item.photo;
+  if (typeof label !== 'string' || !label || typeof image !== 'string' || !image) return undefined;
+  return { label, image };
+};
 
 const trustBadges = [
   { icon: <Globe size={32} strokeWidth={1.5} />, label: 'Exporting to 40+ Countries' },
@@ -134,11 +112,12 @@ export const RugProductDetailPage: React.FC<RugProductDetailPageProps> = ({
   const gallery = [mainImage, ...galleryImages.filter((img) => img !== mainImage)];
   const inCart = isInCart(product.id);
 
-  // "You May Also Like" is intentionally static: sourced from the fixed local
-  // catalog (src/data.ts) rather than the live API, matched by subcategory.
-  const staticRelated = staticProducts
-    .filter((p) => p.subcategory === product.subcategory && p.id !== product.id)
-    .slice(0, 8);
+  const productIcons = (detail?.productIcon ?? [])
+    .map(extractLabelledImage)
+    .filter((item): item is { label: string; image: string } => !!item);
+  const customisationOptions = (detail?.customisationStudio ?? [])
+    .map(extractLabelledImage)
+    .filter((item): item is { label: string; image: string } => !!item);
 
   return (
     <div style={{ paddingTop: navHeight }} className="bg-[#FAF8F5]">
@@ -230,18 +209,20 @@ export const RugProductDetailPage: React.FC<RugProductDetailPageProps> = ({
                 {detail?.shortDescription || product.description}
               </p>
 
-              <div className="grid grid-cols-2 sm:grid-cols-4 gap-5 mt-7">
-                {introBadges.map((badge) => (
-                  <div key={badge.label} className="flex flex-col items-center gap-2 text-center">
-                    <span className="w-8 h-8 flex items-center justify-center text-[#2C2623]">
-                      {badge.icon}
-                    </span>
-                    <span className="font-sans text-[11px] font-bold text-[#2C2623] leading-snug">
-                      {badge.label}
-                    </span>
-                  </div>
-                ))}
-              </div>
+              {productIcons.length > 0 && (
+                <div className="grid grid-cols-2 sm:grid-cols-4 gap-5 mt-7">
+                  {productIcons.map((badge) => (
+                    <div key={badge.label} className="flex flex-col items-center gap-2 text-center">
+                      <span className="w-8 h-8 flex items-center justify-center">
+                        <img src={badge.image} alt="" className="w-full h-full object-contain" />
+                      </span>
+                      <span className="font-sans text-[11px] font-bold text-[#2C2623] leading-snug">
+                        {badge.label}
+                      </span>
+                    </div>
+                  ))}
+                </div>
+              )}
 
               <div className="flex flex-col sm:flex-row gap-3 mt-8">
                 <button
@@ -301,22 +282,24 @@ export const RugProductDetailPage: React.FC<RugProductDetailPageProps> = ({
             </h2>
           </div>
 
-          <div className="grid grid-cols-4 sm:grid-cols-8 gap-x-4 gap-y-8">
-            {customisationOptions.map(({ label, image }) => (
-              <div key={label} className="flex flex-col items-center gap-3">
-                <span className="w-24 h-24 rounded-full overflow-hidden border border-[#EBE4DC]">
-                  <img
-                    src={image}
-                    alt={label}
-                    className="w-full h-full object-cover"
-                  />
-                </span>
-                <span className="font-sans text-[11px] font-bold tracking-wide uppercase text-[#2C2623] leading-snug">
-                  {label}
-                </span>
-              </div>
-            ))}
-          </div>
+          {customisationOptions.length > 0 && (
+            <div className="grid grid-cols-4 sm:grid-cols-8 gap-x-4 gap-y-8">
+              {customisationOptions.map(({ label, image }) => (
+                <div key={label} className="flex flex-col items-center gap-3">
+                  <span className="w-24 h-24 rounded-full overflow-hidden border border-[#EBE4DC]">
+                    <img
+                      src={image}
+                      alt={label}
+                      className="w-full h-full object-cover"
+                    />
+                  </span>
+                  <span className="font-sans text-[11px] font-bold tracking-wide uppercase text-[#2C2623] leading-snug">
+                    {label}
+                  </span>
+                </div>
+              ))}
+            </div>
+          )}
 
           <p className="font-sans text-sm text-[#615751] mt-8">
             We offer fully customised solutions to match your brand, market and quality standards.
@@ -365,6 +348,7 @@ export const RugProductDetailPage: React.FC<RugProductDetailPageProps> = ({
           {detail.relatedProduct.map((item) => (
             <div
               key={item.productSlug}
+              onClick={() => pushCollectionPath([item.categorySlug, item.subCategorySlug, item.productSlug])}
               className="group shrink-0 snap-start w-[180px] sm:w-[220px] cursor-pointer"
             >
               <div className="relative aspect-square overflow-hidden rounded-lg bg-white">

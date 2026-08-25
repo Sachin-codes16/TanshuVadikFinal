@@ -1,6 +1,6 @@
 import React from 'react';
 import { Layers, Users, ClipboardList, Globe } from 'lucide-react';
-import worldMapImage from '../assets/finalimages1/bussnessMap.jpg';
+import worldMapImage from '../assets/finalimages1/map.jpg';
 
 const stats = [
   { icon: <Layers size={26} className="text-[#8F533C]" strokeWidth={1.5} />, value: '20+', label: 'Product Categories' },

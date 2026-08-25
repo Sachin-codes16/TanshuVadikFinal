@@ -19,7 +19,9 @@ import {
 import { RugsDetailsPage } from './RugsDetailsPage';
 import { getSubCategoryList } from '../api';
 import { getCollectionPathSegments, pushCollectionPath } from './collectionRouting';
-import heroImageDefault from '../assets/collection/SessonalCollectiondetails.jpg';
+// Static fallback banner — commented out so the hero always reflects the
+// category image the API/admin panel provides, with no hardcoded fallback.
+// import heroImageDefault from '../assets/collection/SessonalCollectiondetails.jpg';
 
 interface SeasonalCollectionDetailPageProps {
   categorySlug: string;
@@ -88,7 +90,7 @@ const trustItems = [
 export const SeasonalCollectionDetailPage: React.FC<SeasonalCollectionDetailPageProps> = ({
   categorySlug,
   categoryName = 'Seasonal Collection',
-  heroImage = heroImageDefault,
+  heroImage,
   heroDescription = 'Exclusive handcrafted collections inspired by every season and celebration around the world.',
   onBack,
 }) => {
@@ -177,11 +179,15 @@ export const SeasonalCollectionDetailPage: React.FC<SeasonalCollectionDetailPage
     <div className="pt-16 sm:pt-[76px] bg-[#FAF8F5]">
       {/* Hero */}
       <section className="relative min-h-[280px] sm:min-h-[320px] flex items-end overflow-hidden bg-[#2C2623]">
-        <img
-          src={heroImage}
-          alt={categoryName}
-          className="absolute inset-0 w-full h-full object-cover"
-        />
+        {/* No static fallback image here on purpose — renders automatically
+            once the API/admin panel provides a category image. */}
+        {heroImage && (
+          <img
+            src={heroImage}
+            alt={categoryName}
+            className="absolute inset-0 w-full h-full object-cover"
+          />
+        )}
         <div className="absolute inset-0 bg-[radial-gradient(ellipse_70%_75%_at_0%_100%,_rgba(44,38,35,0.88)_0%,_rgba(44,38,35,0.5)_40%,_transparent_75%)]" />
 
         <div className="relative z-10 w-full px-6 sm:px-10 lg:px-20 pb-14">

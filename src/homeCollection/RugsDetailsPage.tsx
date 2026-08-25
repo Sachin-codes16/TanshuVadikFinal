@@ -6,7 +6,10 @@ import { getProductList, getProductDetail } from '../api';
 import { getCollectionPathSegments, pushCollectionPath } from './collectionRouting';
 import { ApiProduct, mapApiProduct } from './productMapper';
 import { Product, ProductDetailData } from '../types';
-import rugsHeroImage from '../assets/collection/ChatGPT Image Jul 23, 2026, 12_59_04 AM.jpg';
+// Static fallback banner — commented out so the hero always reflects the
+// admin-panel banner image / sub-category image once the API provides one,
+// the same way it already does for "rugs". Do not re-enable as a fallback.
+// import rugsHeroImage from '../assets/collection/ChatGPT Image Jul 23, 2026, 12_59_04 AM.jpg';
 
 interface RugsDetailsPageProps {
   categorySlug: string;
@@ -41,6 +44,7 @@ export const RugsDetailsPage: React.FC<RugsDetailsPageProps> = ({
 }) => {
   const [rugsProducts, setRugsProducts] = useState<Product[]>([]);
   const [bannerImage, setBannerImage] = useState<string | null>(null);
+  const [subCategoryID, setSubCategoryID] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
@@ -52,14 +56,15 @@ export const RugsDetailsPage: React.FC<RugsDetailsPageProps> = ({
     let cancelled = false;
     setLoading(true);
     setError(null);
-// rugsdetals page ki hai ye api 
+// rugsdetals page ki hai ye api
 
     getProductList(categorySlug, subCategorySlug)
-      .then((res: { data?: { data?: ApiProduct[]; bannerImage?: string } }) => {
+      .then((res: { data?: { data?: ApiProduct[]; bannerImage?: string; subCategoryID?: string } }) => {
         if (cancelled) return;
         const list = res?.data?.data ?? [];
         setRugsProducts(list.map(mapApiProduct));
         setBannerImage(res?.data?.bannerImage || null);
+        setSubCategoryID(res?.data?.subCategoryID || null);
       })
       .catch((err) => {
         if (cancelled) return;
@@ -161,11 +166,16 @@ export const RugsDetailsPage: React.FC<RugsDetailsPageProps> = ({
     <div className="pt-16 sm:pt-[76px] bg-[#FAF8F5]">
       {/* Hero */}
       <section className="relative min-h-[280px] sm:min-h-[320px] flex items-end overflow-hidden bg-[#2C2623]">
-        <img
-          src={bannerImage || subCategoryImage || rugsHeroImage}
-          alt={subCategoryName}
-          className="absolute inset-0 w-full h-full object-cover"
-        />
+        {/* No static fallback image here on purpose — once the admin panel
+            sets a banner image (or the sub-category image) via the API, it
+            renders automatically, same as the "rugs" sub-category today. */}
+        {(bannerImage || subCategoryImage) && (
+          <img
+            src={bannerImage || subCategoryImage}
+            alt={subCategoryName}
+            className="absolute inset-0 w-full h-full object-cover"
+          />
+        )}
         <div className="absolute inset-0 bg-[radial-gradient(ellipse_70%_75%_at_0%_100%,_rgba(44,38,35,0.88)_0%,_rgba(44,38,35,0.5)_40%,_transparent_75%)]" />
 
         <div className="relative z-10 max-w-[1280px] mx-auto px-6 pb-14 w-full">
@@ -214,6 +224,7 @@ export const RugsDetailsPage: React.FC<RugsDetailsPageProps> = ({
           onSelectProduct={openProduct}
           categorySlug={categorySlug}
           subCategorySlug={subCategorySlug}
+          subCategoryID={subCategoryID}
         />
       )}
     </div>

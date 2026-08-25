@@ -27,6 +27,7 @@ interface RugsProductListingProps {
   onSelectProduct: (product: Product) => void;
   categorySlug: string;
   subCategorySlug: string;
+  subCategoryID: string | null;
 }
 
 interface FilterOption {
@@ -100,6 +101,7 @@ export const RugsProductListing: React.FC<RugsProductListingProps> = ({
   onSelectProduct,
   categorySlug,
   subCategorySlug,
+  subCategoryID,
 }) => {
   const [expandedGroup, setExpandedGroup] = useState<string | null>(null);
   const [filterOptions, setFilterOptions] = useState<FilterOptionsState>(EMPTY_FILTER_OPTIONS);
@@ -108,15 +110,16 @@ export const RugsProductListing: React.FC<RugsProductListingProps> = ({
   const [filterLoading, setFilterLoading] = useState(false);
 
   useEffect(() => {
+    if (!subCategoryID) return;
     let cancelled = false;
 
     Promise.all([
-      getMaterialList(),
-      getSizeList(),
-      getColorList(),
-      getCollectionFilterList(),
-      getShapeList(),
-      getWeaveList(),
+      getMaterialList(subCategoryID),
+      getSizeList(subCategoryID),
+      getColorList(subCategoryID),
+      getCollectionFilterList(subCategoryID),
+      getShapeList(subCategoryID),
+      getWeaveList(subCategoryID),
     ])
       .then(([materialRes, sizeRes, colorRes, collectionRes, shapeRes, weaveRes]) => {
         if (cancelled) return;
@@ -136,7 +139,7 @@ export const RugsProductListing: React.FC<RugsProductListingProps> = ({
     return () => {
       cancelled = true;
     };
-  }, []);
+  }, [subCategoryID]);
 
   const hasActiveFilters = Object.values(selectedFilters).some((ids) => ids.length > 0);
 

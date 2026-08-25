@@ -41,6 +41,8 @@ export interface ProductDetailData {
   certifications: string;
   productSlug: string;
   productGallery: { image: string }[];
+  productIcon: Record<string, unknown>[];
+  customisationStudio: Record<string, unknown>[];
 
   relatedProduct: RelatedProduct[];
 }

@@ -1,22 +1,16 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { Play, ChevronLeft, ChevronRight } from 'lucide-react';
 import { getCollectionBanner } from '../api';
-import heroImage from '../assets/collection/homedog.jpg';
-import heroImage2 from '../assets/collection/ClickCollection2.jpg';
-import heroImage3 from '../assets/collection/Clickcollection3.jpg';
 
-const FALLBACK_SLIDES = [heroImage, heroImage2, heroImage3];
 const AUTO_SLIDE_INTERVAL = 4000;
 
-// The banner API's response field name isn't confirmed yet (it currently
-// returns an empty list), so accept whichever of these common keys shows up.
 const extractBannerImage = (item: Record<string, unknown>): string | undefined => {
-  const candidate = item.bannerImage ?? item.image ?? item.img ?? item.bannerImg;
+  const candidate = item.banner ?? item.bannerImage ?? item.image ?? item.img ?? item.bannerImg;
   return typeof candidate === 'string' && candidate.length > 0 ? candidate : undefined;
 };
 
 export const HeroBanner: React.FC<{ onExploreCollections: () => void }> = ({ onExploreCollections }) => {
-  const [slides, setSlides] = useState<string[]>(FALLBACK_SLIDES);
+  const [slides, setSlides] = useState<string[]>([]);
   const [activeSlide, setActiveSlide] = useState(0);
   const previousSlideRef = useRef(0);
   const slideCount = slides.length;
@@ -28,11 +22,9 @@ export const HeroBanner: React.FC<{ onExploreCollections: () => void }> = ({ onE
       .then((res: { data?: { data?: Record<string, unknown>[] } }) => {
         if (cancelled) return;
         const images = (res?.data?.data ?? []).map(extractBannerImage).filter((url): url is string => !!url);
-        if (images.length > 0) {
-          setSlides(images);
-          setActiveSlide(0);
-          previousSlideRef.current = 0;
-        }
+        setSlides(images);
+        setActiveSlide(0);
+        previousSlideRef.current = 0;
       })
       .catch((err) => {
         console.error('Failed to load collection banner images.', err);
@@ -51,6 +43,7 @@ export const HeroBanner: React.FC<{ onExploreCollections: () => void }> = ({ onE
   };
 
   useEffect(() => {
+    if (slideCount < 2) return;
     const timer = setInterval(() => {
       changeSlide((prev) => (prev + 1) % slideCount);
     }, AUTO_SLIDE_INTERVAL);
@@ -116,36 +109,42 @@ export const HeroBanner: React.FC<{ onExploreCollections: () => void }> = ({ onE
           </div>
 
           {/* Slide indicator */}
-          <div className="flex items-center gap-2 mt-6">
-            {slides.map((_, index) => (
-              <button
-                key={index}
-                aria-label={`Go to slide ${index + 1}`}
-                onClick={() => changeSlide(() => index)}
-                className={`h-2 rounded-full transition-all cursor-pointer ${
-                  index === activeSlide ? 'w-6 bg-white' : 'w-2 bg-white/40'
-                }`}
-              />
-            ))}
-          </div>
+          {slideCount > 1 && (
+            <div className="flex items-center gap-2 mt-6">
+              {slides.map((_, index) => (
+                <button
+                  key={index}
+                  aria-label={`Go to slide ${index + 1}`}
+                  onClick={() => changeSlide(() => index)}
+                  className={`h-2 rounded-full transition-all cursor-pointer ${
+                    index === activeSlide ? 'w-6 bg-white' : 'w-2 bg-white/40'
+                  }`}
+                />
+              ))}
+            </div>
+          )}
         </div>
       </div>
 
       {/* Prev / next controls */}
-      <button
-        aria-label="Previous slide"
-        onClick={goToPrevSlide}
-        className="absolute left-4 top-1/2 -translate-y-1/2 z-20 w-9 h-9 rounded-full bg-white/90 shadow-md flex items-center justify-center text-[#2C2623] hover:text-[#16294B] transition-colors cursor-pointer"
-      >
-        <ChevronLeft size={18} />
-      </button>
-      <button
-        aria-label="Next slide"
-        onClick={goToNextSlide}
-        className="absolute right-4 top-1/2 -translate-y-1/2 z-20 w-9 h-9 rounded-full bg-black/25 backdrop-blur-sm border border-white/50 shadow-md flex items-center justify-center text-white hover:bg-black/40 transition-colors cursor-pointer"
-      >
-        <ChevronRight size={18} />
-      </button>
+      {slideCount > 1 && (
+        <>
+          <button
+            aria-label="Previous slide"
+            onClick={goToPrevSlide}
+            className="absolute left-4 top-1/2 -translate-y-1/2 z-20 w-9 h-9 rounded-full bg-white/90 shadow-md flex items-center justify-center text-[#2C2623] hover:text-[#16294B] transition-colors cursor-pointer"
+          >
+            <ChevronLeft size={18} />
+          </button>
+          <button
+            aria-label="Next slide"
+            onClick={goToNextSlide}
+            className="absolute right-4 top-1/2 -translate-y-1/2 z-20 w-9 h-9 rounded-full bg-black/25 backdrop-blur-sm border border-white/50 shadow-md flex items-center justify-center text-white hover:bg-black/40 transition-colors cursor-pointer"
+          >
+            <ChevronRight size={18} />
+          </button>
+        </>
+      )}
     </section>
   );
 };
