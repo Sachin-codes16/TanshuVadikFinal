@@ -41,8 +41,11 @@ export const Navbar: React.FC<NavbarProps> = ({
 
         {/* Brand Logo exactly as requested */}
         <a
-          href="#"
-          onClick={onNavigateHome}
+          href="/"
+          onClick={(e) => {
+            e.preventDefault();
+            onNavigateHome();
+          }}
           className="flex items-center select-none group shrink-0 mr-2 sm:mr-5 lg:mr-9"
         >
           <img

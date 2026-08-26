@@ -365,8 +365,8 @@ export const ContactPage: React.FC = () => {
 
      <div className="w-full px-6 sm:px-[80px] grid grid-cols-1 md:grid-cols-2 gap-6 max-w-[1600px] mx-auto">
        {[
-         { office: indiaOffice, photo: indiaOfficePhoto, role: 'Head Office & Manufacturing', mapShape: indiaMapShape, maskMode: 'luminance', maskSize: '190%' },
-         { office: australiaOffice, photo: australiaOfficePhoto, role: 'Registered Head Office', mapShape: australiaMapShape, maskMode: 'alpha', maskSize: '150%' },
+         { office: indiaOffice, photo: indiaOfficePhoto, role: 'Manufacturing Unit', mapShape: indiaMapShape, maskMode: 'luminance', maskSize: '190%' },
+         { office: australiaOffice, photo: australiaOfficePhoto, role: 'Head Office', mapShape: australiaMapShape, maskMode: 'alpha', maskSize: '150%' },
        ].map(({ office, photo, role, mapShape, maskMode, maskSize }) => (
          <div key={office.id} className="bg-white border border-[#EBE4DC] flex flex-col sm:flex-row overflow-hidden">
            <div
@@ -396,24 +396,28 @@ export const ContactPage: React.FC = () => {
              <p className="relative font-sans text-sm text-[#615751] leading-relaxed">
                {office.id === 'india-factory' ? (
                  <>
-                   Village Kharak Ramji,<br />
-                   Near Samalkha Road,<br />
-                   Panipat - 132103,<br />
-                   Haryana, India
+                   Industrial Area, Phase II,<br />
+                   Hari Nagar,<br />
+                   Panipat, Haryana<br />
+                   Pin : 132103
                  </>
                ) : office.id === 'australia-office' ? (
                  <>
-                   Tanshu Australia Pty Ltd,<br />
-                   Melbourne, Victoria,<br />
-                   Australia
+                   4&amp;5/62 Argyle Street,<br />
+                   South Windsor 2756,<br />
+                   New South Wales,<br />
+                   Sydney
                  </>
                ) : (
                  office.address
                )}
              </p>
-             <a href={`tel:${office.phone.replace(/\s/g, '')}`} className="relative flex items-center gap-2 font-sans text-sm font-bold text-[#2C2623] hover:text-[#8F533C] mt-1">
+             <a
+               href={`tel:${(office.id === 'india-factory' ? '+918930009468' : office.id === 'australia-office' ? '+610245108076' : office.phone).replace(/\s/g, '')}`}
+               className="relative flex items-center gap-2 font-sans text-sm font-bold text-[#2C2623] hover:text-[#8F533C] mt-1"
+             >
                <Phone size={14} />
-               {office.phone}
+               {office.id === 'india-factory' ? '+91 89300 09468' : office.id === 'australia-office' ? '+61 02 4510 8076' : office.phone}
              </a>
            </div>
          </div>
