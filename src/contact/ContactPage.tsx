@@ -287,16 +287,15 @@ export const ContactPage: React.FC = () => {
            <h3 className="font-sans text-xs font-bold tracking-widest text-[#2C2623] uppercase">
              INDIA
            </h3>
-           <span className="font-sans text-sm text-[#615751]">Head Office &amp; Manufacturing</span>
+           <span className="font-sans text-sm text-[#615751]">Manufacturing Unit</span>
            <span className="font-sans text-xs text-[#615751] leading-snug">
-             Village Kharak Ramji,<br />
-             Near Samalkha Road,<br />
-             Panipat - 132103,<br />
-             Haryana, India
+             Industrial Area, Phase II, Hari Nagar,<br />
+             Panipat, Haryana<br />
+             Pin : 132103
            </span>
-           <a href={`tel:${indiaOffice.phone.replace(/\s/g, '')}`} className="flex items-center gap-2 font-sans text-sm text-[#615751] hover:text-[#8F533C] mt-1">
+           <a href="tel:+918930009468" className="flex items-center gap-2 font-sans text-sm text-[#615751] hover:text-[#8F533C] mt-1">
              <Phone size={14} />
-             {indiaOffice.phone}
+             +91 89300 09468
            </a>
          </div>
 
@@ -306,15 +305,15 @@ export const ContactPage: React.FC = () => {
            <h3 className="font-sans text-xs font-bold tracking-widest text-[#2C2623] uppercase">
              AUSTRALIA
            </h3>
-           <span className="font-sans text-sm text-[#615751]">Registered Head Office</span>
+           <span className="font-sans text-sm text-[#615751]">Head Office</span>
            <span className="font-sans text-xs text-[#615751] leading-snug">
-             Tanshu Australia Pty Ltd,<br />
-             Melbourne, Victoria,<br />
-             Australia
+             4&amp;5/62 Argyle Street,<br />
+             South Windsor 2756, New South Wales,<br />
+             Sydney
            </span>
-           <a href={`tel:${australiaOffice.phone.replace(/\s/g, '')}`} className="flex items-center gap-2 font-sans text-sm text-[#615751] hover:text-[#8F533C] mt-1">
+           <a href="tel:+610245108076" className="flex items-center gap-2 font-sans text-sm text-[#615751] hover:text-[#8F533C] mt-1">
              <Phone size={14} />
-             {australiaOffice.phone}
+             +61 02 4510 8076
            </a>
          </div>
 

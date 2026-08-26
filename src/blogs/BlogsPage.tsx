@@ -2,6 +2,8 @@ import React, { useEffect, useState } from 'react';
 import { ArrowRight, Calendar } from 'lucide-react';
 import heroImage from '../assets/images/heartbehind.jpg';
 import { getBlogList } from '../api';
+import { BlogDetailPage } from './BlogDetailPage';
+import { getBlogSlugFromPath, pushBlogPath } from './blogRouting';
 
 interface ApiBlog {
   catName: string;
@@ -24,10 +26,31 @@ interface BlogPost {
 
 const stripHtml = (html: string) => html.replace(/<[^>]*>/g, '').trim();
 
-export const BlogsPage: React.FC = () => {
+interface BlogsPageProps {
+  onNavigateHome?: () => void;
+}
+
+export const BlogsPage: React.FC<BlogsPageProps> = ({ onNavigateHome }) => {
   const [posts, setPosts] = useState<BlogPost[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [selectedSlug, setSelectedSlug] = useState<string | null>(() => getBlogSlugFromPath());
+
+  useEffect(() => {
+    const onPopState = () => setSelectedSlug(getBlogSlugFromPath());
+    window.addEventListener('popstate', onPopState);
+    return () => window.removeEventListener('popstate', onPopState);
+  }, []);
+
+  const openBlog = (slug: string) => {
+    setSelectedSlug(slug);
+    pushBlogPath(slug);
+  };
+
+  const closeBlog = () => {
+    setSelectedSlug(null);
+    pushBlogPath();
+  };
 
   useEffect(() => {
     let cancelled = false;
@@ -64,6 +87,17 @@ export const BlogsPage: React.FC = () => {
       cancelled = true;
     };
   }, []);
+
+  if (selectedSlug) {
+    return (
+      <BlogDetailPage
+        slug={selectedSlug}
+        onBack={closeBlog}
+        onSelectRelated={openBlog}
+        onNavigateHome={onNavigateHome}
+      />
+    );
+  }
 
   return (
     <div className="pt-16 sm:pt-[76px] bg-[#FAF8F5]">
@@ -106,7 +140,8 @@ export const BlogsPage: React.FC = () => {
               {posts.map((post) => (
                 <article
                   key={post.slug}
-                  className="group flex flex-col bg-white border border-[#EBE4DC] hover:border-[#8F533C]/40 hover:shadow-md transition-all duration-300"
+                  onClick={() => openBlog(post.slug)}
+                  className="group flex flex-col bg-white border border-[#EBE4DC] hover:border-[#8F533C]/40 hover:shadow-md transition-all duration-300 cursor-pointer"
                 >
                   <div className="relative aspect-[4/3] overflow-hidden bg-[#F4EFEA]">
                     <img
