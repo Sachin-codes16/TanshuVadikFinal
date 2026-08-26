@@ -122,7 +122,7 @@ export default function App() {
 
   return (
     <InquiryProvider>
-      <div id="app-root" className="min-h-screen flex flex-col bg-[#FAF8F5] text-[#2C2623] font-sans overflow-x-hidden selection:bg-[#8F533C] selection:text-white">
+      <div id="app-root" className="min-h-screen flex flex-col bg-[#FAF8F5] text-[#2C2623] font-sans overflow-x-hidden overflow-y-visible selection:bg-[#8F533C] selection:text-white">
 
         {/* Navigation bar with floating RFQ badge */}
         <Navbar
