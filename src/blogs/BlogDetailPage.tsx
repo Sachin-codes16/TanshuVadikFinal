@@ -155,9 +155,9 @@ export const BlogDetailPage: React.FC<BlogDetailPageProps> = ({ slug, onBack, on
       </section>
 
       {/* ARTICLE */}
-      <section className="pt-8 pb-4">
-        <div className="w-full px-6 sm:px-11">
-          <div className="bg-white border border-[#EBE4DC] p-6 sm:p-8">
+      <section className="pt-4 sm:pt-8 pb-4">
+        <div className="w-full px-4 sm:px-8">
+          <div className="bg-white border border-[#EBE4DC] p-3 sm:p-5">
             <h2 className="font-serif text-xl text-[#2C2623] font-bold uppercase tracking-wide mb-4">
               The Story
             </h2>
